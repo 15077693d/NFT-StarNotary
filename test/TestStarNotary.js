@@ -86,13 +86,13 @@ it('lets user2 buy a star and decreases its balance in ether', async() => {
     assert(value, starPrice);
   });
 
-  it('The token name and token symbol are added properly.', async() => {
+  it('can add the star name and star symbol properly', async() => {
     let instance  = await StarNotary.deployed();
     assert("StarNotary", await instance.name())  
     assert("STAR",await instance.symbol())  
   });
 
-  it('2 users can exchange their stars.', async() => {
+  it('lets 2 users exchange stars', async() => {
       let instance = await StarNotary.deployed();
       let user1 = accounts[0]
       let user2 = accounts[1]
@@ -105,7 +105,7 @@ it('lets user2 buy a star and decreases its balance in ether', async() => {
       assert(user2, await instance.ownerOf(6));
   })
 
-  it('Stars Tokens can be transferred from one address to another.',async() => {
+  it('lets a user transfer a star',async() => {
       let instance = await StarNotary.deployed();
       let owner1 = accounts[0]
       let owner2 = accounts[1]
