@@ -5,16 +5,15 @@ contract StarNotary is ERC721{
     struct Star {
         string name;
     }
-    constructor() ERC721("StarNotary", "STAR") { }
+    constructor() ERC721("StarNotary", "STAR") public { }
     mapping(uint256 => Star) public tokenIdToInfo;
     mapping(uint256 => uint256) public tokenIdToPrice;
 
     // Create Star 
-    function createStar(string memory starName, uint256 _tokenId) public  returns (address){
+    function createStar(string memory starName, uint256 _tokenId) public  {
         Star memory newStar = Star(starName);
         tokenIdToInfo[_tokenId] = newStar;
         _mint(msg.sender, _tokenId);
-        return ownerOf(_tokenId);
     }
 
     // Put to sale
@@ -24,7 +23,7 @@ contract StarNotary is ERC721{
     }
 
     // Buy the star
-    function buyStar(uint256 _tokenId) public payable returns (address){
+    function buyStar(uint256 _tokenId) public payable {
         uint256 starCost = tokenIdToPrice[_tokenId];
         require(starCost>0, "The Star didn't sell");
         require(msg.value >= starCost, "You have not enough money");
@@ -35,29 +34,25 @@ contract StarNotary is ERC721{
         if(msg.value > starCost){
             msg.sender.transfer(msg.value - starCost);
         }
-        return ownerOf(_tokenId);
     }
 
     // Look up star
     function lookUptokenIdToStarInfo(uint256 _tokenId) public view returns (string memory){
-        require(tokenIdToPrice[_tokenId] > 0,"There is no the token...");
+        require(keccak256(bytes(tokenIdToInfo[_tokenId].name))!=keccak256(bytes("")),"There is no the token...");
         return tokenIdToInfo[_tokenId].name;
     }
 
     // Exchange the star
-    function exchangeStars(uint256 _tokenId1, uint256 _tokenId2, address owner2) public returns (address, address){
-        require(ownerOf(_tokenId1) == msg.sender);
-        require(ownerOf(_tokenId2) == owner2);
-        address owner1 = msg.sender;
+    function exchangeStars(uint256 _tokenId1, address owner1, uint256 _tokenId2, address owner2) public {
+        require(ownerOf(_tokenId1) == owner1, "(1) not the owner");
+        require(ownerOf(_tokenId2) == owner2, "(2) not the owner");
         _transfer(owner1, owner2, _tokenId1);
         _transfer(owner2, owner1, _tokenId2);
-        return (ownerOf(_tokenId1), ownerOf(_tokenId2));
     }
 
     // Transfer the star
-    function transferStar(address to, uint256 _tokenId) public returns (address){
+    function transferStar(address to, uint256 _tokenId) public {
         require(ownerOf(_tokenId)== msg.sender);
         _transfer(msg.sender, to, _tokenId);
-        return ownerOf(_tokenId);
     }
 }

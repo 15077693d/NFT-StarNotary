@@ -23,7 +23,8 @@
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
-
+var HDWalletProvider = require("truffle-hdwallet-provider");
+require('dotenv').config();
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -47,7 +48,12 @@ module.exports = {
     //  port: 8545,            // Standard Ethereum port (default: none)
     //  network_id: "*",       // Any network (default: none)
     // },
-    
+    rinkeby: {
+      provider: function() {
+        return new HDWalletProvider(process.env.MNEMONIC,process.env.INFURA_LINK );
+      },
+      network_id: 4,
+    },
     develop: {
       port: 8545
     },

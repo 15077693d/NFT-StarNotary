@@ -18,11 +18,9 @@ const App = {
         deployedNetwork.address,
       );
       const { createStar } = this.meta.methods;
-      console.log(this.meta.methods)
       // get accounts
       const accounts = await web3.eth.getAccounts();
       this.account = accounts[0];
-      console.log(accounts[0])
     } catch (error) {
       console.error("Could not connect to contract or chain.");
     }
@@ -35,13 +33,19 @@ const App = {
 
   createStar: async function() {
     const { createStar } = this.meta.methods;
-    console.log(createStar)
     const name = document.getElementById("starName").value;
     const id = document.getElementById("starId").value;
     await createStar(name, id).send({from: this.account});
     App.setStatus("New Star Owner is " + this.account + ".");
-  }
+  },
 
+  searchStar: async function(){
+    const id = document.getElementById('search-starId').value
+    console.log(id)
+    const { lookUptokenIdToStarInfo } = this.meta.methods;
+    const status = document.getElementById("search-status");
+    status.innerHTML = await lookUptokenIdToStarInfo(id).call();
+  }
 };
 
 window.App = App;
@@ -54,7 +58,7 @@ window.addEventListener("load", async function() {
   } else {
     console.warn("No web3 detected. Falling back to http://127.0.0.1:8545. You should remove this fallback when you deploy live",);
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-    App.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"),);
+    App.web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/v3/0f0c6004826f41b2b5fd6a707dbf85f7"),);
   }
 
   App.start();
